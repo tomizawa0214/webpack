@@ -1,12 +1,26 @@
 const path = require("path");
 
-const outputPath = path.resolve(__dirname, "../tomizawa/docs")
+const outputPath = path.resolve(__dirname, "./")
+
+// [定数] webpack の出力オプションを指定します
+// 'production' か 'development' を指定
+const MODE = "production";
+// ソースマップの利用有無(productionのときはソースマップを利用しない)
+const enabledSourceMap = MODE === "development";
 
 module.exports = {
-  mode: "production",
-  devtool: "source-map",
+  // モード値を production に設定すると最適化された状態で、
+  // development に設定するとソースマップ有効でJSファイルが出力される
+  mode: MODE,
 
-  entry: "../tomizawa/docs/index.js",
+  // ローカル開発用環境を立ち上げる
+  // 実行時にブラウザが自動的に localhost を開く
+  devServer: {
+    contentBase: "./",
+    open: true
+  },
+
+  entry: "./index.js",
   output: {
     filename: "main.js",
     path: outputPath
@@ -15,40 +29,47 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.scss$/,
+        test: /\.css$/,
         use: [
           "style-loader",
           {
             loader: "css-loader",
             options: {
-              url: true,
-              sourceMap: true,
-              importLoaders: 2
+              url: false,
+              // sourceMap: enabledSourceMap
             }
           },
-          {
-            loader: "postcss-loader",
-            options: {
-              sourceMap: true,
-              plugins: [
-                require("autoprefixer")({
-                  grid: true
-                })
-              ]
-            }
-          },
-          {
-            loader: "sass-loader",
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      },
-      {
-        test: /\.(gif|png|jpg|eot|wof|woff|woff2|ttf|svg)$/,
-        loader: "url-loader"
+        ],
       }
+      // {
+      //   test: /\.scss$/,
+      //   use: [
+      //     "style-loader",
+      //     {
+      //       loader: "css-loader",
+      //       options: {
+      //         url: false,
+      //         // sourceMap: enabledSourceMap,
+      //         importLoaders: 2
+      //       }
+      //     },
+      //     {
+      //       loader: "postcss-loader",
+      //       options: {
+      //         // sourceMap: enabledSourceMap,
+      //         plugins: [
+      //           require("autoprefixer")({ grid: true })
+      //         ]
+      //       }
+      //     },
+      //     {
+      //       loader: "sass-loader",
+      //       options: {
+      //         // sourceMap: enabledSourceMap
+      //       }
+      //     }
+      //   ]
+      // }
     ]
   }
 };
